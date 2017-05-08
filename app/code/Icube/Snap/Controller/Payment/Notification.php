@@ -39,25 +39,30 @@ class Notification extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
+        echo 'you did it';
+        error_log('notif url');
         $om = $this->_objectManager;
         //        $session = $om->get('Magento\Checkout\Model\Session');
         $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
+        error_log($isProduction);
         $vtConfig->setIsProduction($isProduction);
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        error_log($serverKey);
         $vtConfig->setServerKey($serverKey);
         $notif = $om->get('Veritrans_Notification');
-
-        $prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        error_log(print_r($notif,TRUE));
+        /*$prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $orderId = str_replace($prefix,'',$notif->order_id);
         if (strpos($orderId,'-') !== false) {
             $arrOrderId = explode("-",$orderId);
             $orderId = $arrOrderId[0];
-        }
+        }*/
+        $orderId = $notif->order_id;
         $order = $om->get('Magento\Sales\Model\Order')->loadByIncrementId($orderId);
-
+        
         $transaction = $notif->transaction_status;
         $fraud = $notif->fraud_status;
         $payment_type = $notif->payment_type;
@@ -141,7 +146,9 @@ class Notification extends \Magento\Framework\App\Action\Action
         else {
             $order->setStatus(\Magento\Sales\Model\Order::STATUS_FRAUD);
         }
+        error_log('before order save');
         $order->save();
+        error_log('order save sukses');
 
     }
 }
