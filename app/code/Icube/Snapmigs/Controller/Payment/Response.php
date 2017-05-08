@@ -43,10 +43,8 @@ class Response extends \Magento\Framework\App\Action\Action
 
         if(isset($_GET['order_id']) ) {
             $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
-            $prefix = $config->getValue('payment/snapmigs/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 //            Mage::log('GET:'.print_r($_GET,true),null,'responseAction.log',true);
             $orderId = $_GET['order_id']; // Generally sent by gateway
-            $orderId = str_replace($prefix,'',$orderId);
             $status = isset($_GET['status_code'])?$_GET['status_code']:0 ;
             $transStatus = isset($_GET['transaction_status'])?$_GET['transaction_status']:"Unknown" ;
 

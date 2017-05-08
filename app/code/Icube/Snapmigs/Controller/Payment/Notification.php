@@ -50,8 +50,7 @@ class Notification extends \Magento\Framework\App\Action\Action
         $vtConfig->setServerKey($serverKey);
         $notif = $om->get('Veritrans_Notification');
 
-        $prefix = $config->getValue('payment/snapmigs/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $orderId = str_replace($prefix,'',$notif->order_id);
+        $orderId = $notif->order_id;
         if (strpos($orderId,'-') !== false) {
             $arrOrderId = explode("-",$orderId);
             $orderId = $arrOrderId[0];
