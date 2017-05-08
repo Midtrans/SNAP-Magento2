@@ -1,5 +1,5 @@
 <?php
-namespace Icube\Snap\Controller\Payment;
+namespace Icube\Snapinstmigs\Controller\Payment;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Controller\ResultFactory;
@@ -39,30 +39,25 @@ class Notification extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        echo 'you did it';
-        error_log('notif url');
         $om = $this->_objectManager;
         //        $session = $om->get('Magento\Checkout\Model\Session');
         $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
-        $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        error_log($isProduction);
+        $isProduction = $config->getValue('payment/snapinstmigs/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
         $vtConfig->setIsProduction($isProduction);
-        $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        error_log($serverKey);
+        $serverKey = $config->getValue('payment/snapinstmigs/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $vtConfig->setServerKey($serverKey);
         $notif = $om->get('Veritrans_Notification');
-        error_log(print_r($notif,TRUE));
-        /*$prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+
+        $prefix = $config->getValue('payment/snapinstmigs/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $orderId = str_replace($prefix,'',$notif->order_id);
         if (strpos($orderId,'-') !== false) {
             $arrOrderId = explode("-",$orderId);
             $orderId = $arrOrderId[0];
-        }*/
-        $orderId = $notif->order_id;
+        }
         $order = $om->get('Magento\Sales\Model\Order')->loadByIncrementId($orderId);
-        
+
         $transaction = $notif->transaction_status;
         $fraud = $notif->fraud_status;
         $payment_type = $notif->payment_type;
@@ -146,9 +141,7 @@ class Notification extends \Magento\Framework\App\Action\Action
         else {
             $order->setStatus(\Magento\Sales\Model\Order::STATUS_FRAUD);
         }
-        error_log('before order save');
         $order->save();
-        error_log('order save sukses');
 
     }
 }
