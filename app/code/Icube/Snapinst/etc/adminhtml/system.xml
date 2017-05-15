@@ -29,9 +29,6 @@
                 <field id="client_key" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Client Key</label>
                 </field>
-                <field id="prefix" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Prefix</label>
-                </field>
                 <field id="custom_expiry" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Custom Expiry</label>
                 </field>

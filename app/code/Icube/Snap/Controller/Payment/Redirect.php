@@ -69,14 +69,14 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 //        echo $title;exit();
         $oneClick = $config->getValue('payment/snap/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $customExpiry = $config->getValue('payment/snap/custom_expiry', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
         $vtConfig->setIsSanitized(false);
 
         $transaction_details = array();
-        $prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $transaction_details['order_id'] = $prefix.$orderIncrementId;
+        $transaction_details['order_id'] = $orderIncrementId;
 
         $order_billing_address = $quote->getBillingAddress();
         $billing_address = array();
@@ -232,65 +232,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $item_details[] = $balancAmount;
         }
 
-
-        // convert to IDR
-//        $current_currency = Mage::app()->getStore()->getCurrentCurrencyCode();
-//        if ($current_currency != 'IDR') {
-//            $conversion_func = function ($non_idr_price) {
-//                return $non_idr_price *
-//                Mage::getStoreConfig('payment/snap/conversion_rate');
-//            };
-//            foreach ($item_details as &$item) {
-//                $item['price'] =
-//                    intval(round(call_user_func($conversion_func, $item['price'])));
-//            }
-//            unset($item);
-//        }
-//        else {
-//            foreach ($item_details as &$each) {
-//                $each['price'] = (int) $each['price'];
-//            }
-//            unset($each);
-//        }
-
-        $list_enable_payments = array();
-        if ($config->getValue('payment/snap/enable_creditcard', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'credit_card';
-        }
-        if ($config->getValue('payment/snap/enable_cimbclick', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'cimb_clicks';
-        }
-        if ($config->getValue('payment/snap/enable_mandiriclickpay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'mandiri_clickpay';
-        }
-        if ($config->getValue('payment/snap/enable_permatava', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'bank_transfer';
-        }
-        if ($config->getValue('payment/snap/enable_briepay', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'bri_epay';
-        }
-        if ($config->getValue('payment/snap/enable_tcash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'telkomsel_cash';
-        }
-        if ($config->getValue('payment/snap/enable_mandiriecash', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'mandiri_ecash';
-        }
-        if ($config->getValue('payment/snap/enable_xltunai', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'xl_tunai';
-        }
-        if ($config->getValue('payment/snap/enable_mandiribill', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'echannel';
-        }
-        if ($config->getValue('payment/snap/enable_bbmmoney', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'bbm_money';
-        }
-        if ($config->getValue('payment/snap/enable_indomaret', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'cstore';
-        }
-        if ($config->getValue('payment/snap/enable_dompetku', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) == '1') {
-            $list_enable_payments[] = 'indosat_dompetku';
-        }
-
         $totalPrice = 0;
         foreach ($item_details as $item) {
             $totalPrice += $item['price'] * $item['quantity'];
@@ -301,8 +242,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $payloads['transaction_details'] = $transaction_details;
         $payloads['item_details']        = $item_details;
         $payloads['customer_details']    = $customer_details;
-        $payloads['snap']               = array('enabled_payments'=> $list_enable_payments);
-
 
          if($oneClick == 1){
             $credit_card['secure'] = true;
@@ -310,6 +249,22 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $payloads['credit_card'] = $credit_card;
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         } 
+ 
+        if($customExpiry){
+           
+           $customExpiry = explode(" ", $customExpiry);
+           $expiry_unit =  $customExpiry[1];
+           $expiry_duration = (int)$customExpiry[0];
+           error_log($expiry_unit . $expiry_duration);
+
+           $time = time();
+           $payloads['expiry'] = array(
+            'start_time' => date("Y-m-d H:i:s O",$time),
+            'unit' => $expiry_unit, 
+            'duration'  => (int)$expiry_duration
+            );
+
+        }
 
 
         try {
