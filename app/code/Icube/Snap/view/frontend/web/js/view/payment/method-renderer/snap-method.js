@@ -42,7 +42,9 @@ define(
                         success: function(data) {
                             //var token = data;
                             console.log('data = '+ data);
-                            var token = data.substring(0,36)
+                            //var token = data.substring(0,36)
+                            
+							var token = data.replace(/\s+/g, '');
                             console.log("token = " + token);
                             snap.pay(token, {
                                 onSuccess: function(result){
