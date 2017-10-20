@@ -243,6 +243,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $transaction_details['gross_amount'] = $totalPrice;
 
         $terms      = array(3,6,9,12,15,18,21,24,27,30,33,36);
+        error_log("terms");
+        error_log(print_r($terms,TRUE));
+
         $installment = array();
         $installment['required'] = true;
         $installment['terms'] = array(
@@ -290,6 +293,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $logger = new \Zend\Log\Logger();
             $logger->addWriter($writer);
             error_log(print_r($payloads,true));
+            error_log(json_encode($payloads));
             $logger->info('$payloads:'.print_r($payloads,true));
 //            var_dump($payloads);
 //            Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);

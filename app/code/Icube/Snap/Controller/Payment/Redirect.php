@@ -79,6 +79,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $transaction_details['order_id'] = $orderIncrementId;
 
         $order_billing_address = $quote->getBillingAddress();
+    
         $billing_address = array();
         $billing_address['first_name']   = $order_billing_address->getFirstname();
         $billing_address['last_name']    = $order_billing_address->getLastname();
