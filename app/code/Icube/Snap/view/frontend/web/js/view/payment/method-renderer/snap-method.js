@@ -23,6 +23,7 @@ define(
             redirectAfterPlaceOrder: false,
             /** Open VT-Snap */
             afterPlaceOrder: function () {
+
                 var production = window.checkoutConfig.payment.snap.production;
                 console.log('production = '+production);
                 var client_key = window.checkoutConfig.payment.snap.clientkey;
@@ -34,7 +35,12 @@ define(
                     var js = "https://app.sandbox.midtrans.com/snap/snap.js";
                 }
 
-                $.getScript(js, function(){
+                var scriptTag = document.createElement('script');
+                scriptTag.src = js;
+                scriptTag.setAttribute('data-client-key', client_key);
+                document.body.appendChild(scriptTag);
+
+                // $.getScript(js, function(){
                     $.ajax({
                         type: 'post',
                         url: url.build('snap/payment/redirect'),
@@ -77,7 +83,7 @@ define(
                             });
                         }
                     });
-                });
+                // });
             }
         });
     }
