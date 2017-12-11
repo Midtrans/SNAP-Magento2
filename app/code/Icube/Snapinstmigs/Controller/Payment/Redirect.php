@@ -267,22 +267,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         }
         $payloads['credit_card'] = $credit_card;
-        
-        if($customExpiry){
-           
-           $customExpiry = explode(" ", $customExpiry);
-           $expiry_unit =  $customExpiry[1];
-           $expiry_duration = (int)$customExpiry[0];
-           error_log($expiry_unit . $expiry_duration);
-
-           $time = time();
-           $payloads['expiry'] = array(
-            'start_time' => date("Y-m-d H:i:s O",$time),
-            'unit' => $expiry_unit, 
-            'duration'  => (int)$expiry_duration
-            );
-
-        }
 
         try {
 //            $this->_logger->addDebug('some text or variable');

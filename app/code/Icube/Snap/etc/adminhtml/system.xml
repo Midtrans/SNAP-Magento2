@@ -19,6 +19,15 @@
                     <label>Is Production</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
+                <field id="merchant_id" translate="label" type="text" sortOrder="11" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Merchant Id</label>
+                </field>
+                <field id="server_key" translate="label" type="text" sortOrder="12" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Server Key</label>
+                </field>
+                <field id="client_key" translate="label" type="text" sortOrder="13" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Client Key</label>
+                </field>
                 <field id="is_3ds" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable 3D Secure</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
@@ -26,12 +35,6 @@
                 <field id="one_click" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable One click</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
-                </field>
-                <field id="server_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Server Key</label>
-                </field>
-                <field id="client_key" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Client Key</label>
                 </field>
                 <field id="custom_expiry" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Custom Expiry</label>
