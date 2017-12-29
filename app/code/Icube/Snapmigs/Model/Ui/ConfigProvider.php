@@ -46,11 +46,15 @@ final class ConfigProvider  implements ConfigProviderInterface{
     {
         $production = $this->iv->getConfigData("is_production");
         $clientkey = $this->iv->getConfigData("client_key");
+        $merchantid = $this->iv->getConfigData("merchant_id");
+        $mixpanelkey = $production == 1 ? "17253088ed3a39b1e2bd2cbcfeca939a" : "9dcba9b440c831d517e8ff1beff40bd9";
         return [
             'payment' => [
                 self::CODE => [
                     'production'=> $production,
-                    'clientkey'=> $clientkey
+                    'clientkey'=> $clientkey,
+                    'merchantid' => $merchantid,
+                    'mixpanelkey' => $mixpanelkey
                 ]
             ]
         ];

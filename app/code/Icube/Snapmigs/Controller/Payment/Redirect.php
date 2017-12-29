@@ -286,8 +286,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $logger->info('snap token:'.print_r($token,true));
 //            var_dump($redirUrl);exit();
             error_log('snap_token:'.$token);
-            echo $token;
-
+            $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $result->setData($token);
+            return $result;
 
 
         }

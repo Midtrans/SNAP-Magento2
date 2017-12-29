@@ -70,7 +70,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
 //        echo $title;exit();
         $oneClick = $config->getValue('payment/snapio/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $bank = $config->getValue('payment/snapio/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-         $customExpiry = $config->getValue('payment/snapio/custom_expiry', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $customExpiry = $config->getValue('payment/snapio/custom_expiry', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $binFilter = $config->getValue('payment/snapio/bin_filter', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
@@ -255,7 +256,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         
         $credit_card['installment'] = $installment;
-
+        $whitelist_bin = explode(",", $binFilter);
+        error_log(print_r($whitelist_bin,TRUE));
+        $credit_card['whitelist_bins'] = $whitelist_bin;
         
         $payloads = array();
         $payloads['transaction_details'] = $transaction_details;
@@ -268,6 +271,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $credit_card['save_card'] = true;
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         }
+
+        
+
 
         $payloads['credit_card'] = $credit_card;
 
@@ -301,10 +307,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $token = $snap->getSnapToken($payloads);
             $logger->info('snap token:'.print_r($token,true));
 //            var_dump($redirUrl);exit();
-            error_log('snap_token:'.$token);
-            echo $token;
-
-
+            $result = $this->resultFactory->create(ResultFactory::TYPE_JSON);
+            $result->setData($token);
+            return $result;
 
         }
         catch (Exception $e) {
