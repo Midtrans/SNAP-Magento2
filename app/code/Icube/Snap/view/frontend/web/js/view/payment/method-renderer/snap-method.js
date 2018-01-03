@@ -81,7 +81,9 @@ define(
                             }
 
                             console.log('data = '+ data);
-                            var token = data.substring(0,36)
+                            //var token = data.substring(0,36)
+                            
+							var token = data.replace(/\s+/g, '');
                             console.log("token = " + token);
 
                             mixpanel.track(
