@@ -49,7 +49,7 @@ define(
                 scriptTag.setAttribute('data-client-key', client_key);
                 document.body.appendChild(scriptTag);
 
-                //$.getScript(js, function(){
+                
                     $.ajax({
                         type: 'post',
                         url: url.build('snapmigs/payment/redirect'),
@@ -77,57 +77,85 @@ define(
                                 }
                               );
                             }
-                            //var token = data;
-                            console.log('data = '+ data);
-                            var token = data.substring(0,36)
-                            console.log("token = " + token);
+                    
+                        console.log('data = '+ data);
+                        var token = data.substring(0,36)
+                        console.log("token = " + token);
 
-                            mixpanel.track(
-                              'pg-pay', {
-                                merchant_id: merchant_id,
-                                plugin_name: "cc_migs",
-                                snap_token: data
-                              }
-                            );
+                        mixpanel.track(
+                            'pg-pay', {
+                              merchant_id: merchant_id,
+                              plugin_name: "cc_migs",
+                              snap_token: data
+                            }
+                        );
 
-                            snap.pay(token, {
-                                onSuccess: function(result){
-                                    trackResult(data, merchant_id, 'cc_migs', 'success', result);
-                                    messageList.addSuccessMessage({
-                                        message: result.status_message
+                        var retryCount = 0;
+                        var snapExecuted = false;
+                        var intervalFunction = 0;
+                        function execSnapCont(){
+                            intervalFunction = setInterval(function() {
+                                try{
+                                    snap.pay(token, 
+                                    {
+                                        skipOrderSummary : true,
+                                        onSuccess: function(result){
+                                            trackResult(data, merchant_id, 'cc_migs', 'success', result);
+                                            messageList.addSuccessMessage({
+                                                message: result.status_message
+                                            });
+                                            window.location.replace(url.build('checkout/onepage/success'));
+                                            console.log(result.status_message);
+                                        },
+                                        onPending: function(result){
+                                            trackResult(data, merchant_id, 'cc_migs', 'pending', result);
+                                            messageList.addSuccessMessage({
+                                                message: result.status_message
+                                            });
+                                            window.location.replace(url.build('checkout/onepage/success'));
+                                            console.log(result.status_message);
+                                        },
+                                        onError: function(result){
+                                            trackResult(data, merchant_id , 'cc_migs', 'error', result);
+                                            messageList.addErrorMessage({
+                                                message: result.status_message
+                                            });
+                                            window.location.replace(url.build('checkout/onepage/failure'));
+                                            console.log(result.status_message);    
+                                        },
+                                        onClose: function(){
+                                            trackResult(data, merchant_id, 'cc_migs', 'close');
+                                            messageList.addErrorMessage({
+                                                message: 'customer closed the popup without finishing the payment'
+                                            });
+                                            window.location.replace(url.build('checkout/onepage/failure'));
+                                            console.log('customer closed the popup without finishing the payment');
+                                        }
                                     });
-                                    window.location.replace(url.build('checkout/onepage/success'));
-                                    console.log(result.status_message);
-                                },
-                                onPending: function(result){
-                                    trackResult(data, merchant_id, 'cc_migs', 'pending', result);
-                                    messageList.addSuccessMessage({
-                                        message: result.status_message
-                                    });
-                                    window.location.replace(url.build('checkout/onepage/success'));
-                                    console.log(result.status_message);
-                                },
-                                onError: function(result){
-                                    trackResult(data, merchant_id, 'cc_migs', 'error', result);
-                                    messageList.addErrorMessage({
-                                        message: result.status_message
-                                    });
-                                    window.location.replace(url.build('checkout/onepage/failure'));
-                                    console.log(result.status_message);
-                                },
-                                onClose: function(){
-                                    trackResult(data, merchant_id, 'cc_migs', 'close');
-                                    messageList.addErrorMessage({
-                                        message: 'customer closed the popup without finishing the payment'
-                                    });
-                                    window.location.replace(url.build('checkout/onepage/failure'));
-                                    console.log('customer closed the popup without finishing the payment');
+                                var snapExecuted = true;
+                                } catch (e){
+                                    retryCount++;
+                                    if(retryCount >= 10){
+                                        messageList.addErrorMessage({
+                                        message: 'Trying to load snap, this might take longer'
+                                        });
+                                    }
+                                    
+                                    console.log(e);
+                                    console.log("Snap not ready yet... Retrying in 1000ms!");
+                                } finally {
+                                    if (snapExecuted) {
+                                        clearInterval(intervalFunction);
+                                        // record 'pay' event to Mixpanel
+                                        trackResult(data, merchant_id, 'cc_migs', 'pay', null);
+                                    } 
+
                                 }
-
-                            });
-                        }
-                    });
-                //});
+                            }, 1000);         
+                        }; //end of execsnapcont
+                        execSnapCont();
+                    }
+                });
             }
         });
     }
