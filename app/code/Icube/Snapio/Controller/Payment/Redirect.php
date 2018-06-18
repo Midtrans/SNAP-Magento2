@@ -243,7 +243,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         $transaction_details['gross_amount'] = $totalPrice;
 
-        $terms      = array(3,6,9,12,15,18,21,24,27,30,33,36);
+        $terms      = array(3,6,9,12,18,24);
         error_log("terms");
         error_log(print_r($terms,TRUE));
 
