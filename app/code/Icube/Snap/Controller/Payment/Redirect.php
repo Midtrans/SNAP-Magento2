@@ -41,34 +41,13 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $orderIncrementId = $quote2->getIncrementId();
         $orderId = $quote2->getId();
         $quote = $om->create('Magento\Sales\Model\Order')->load($orderId);
-//        echo $quote->getId();exit();
-//        $order = Mage::getModel('sales/order')
-//            ->loadByIncrementId($orderIncrementId);
-//        $sessionId = Mage::getSingleton('core/session');
 
-        /* send an order email when redirecting to payment page although payment
-           has not been completed. */
-//        $order->setState(Mage::getStoreConfig('payment/snap/'),true,
-//            'New order, waiting for payment.');
-//        $order->sendNewOrderEmail();
-//        $order->setEmailSent(true);
-
-//        $api_version = Mage::getStoreConfig('payment/snap/api_version');
-//        $payment_type = Mage::getStoreConfig('payment/snap/payment_types');
-//        $enable_installment = Mage::getStoreConfig('payment/snap/enable_installment');
-//        $is_enabled_bni = Mage::getStoreConfig('payment/snap/enable_installment_bni');
-//        $is_enabled_mandiri = Mage::getStoreConfig('payment/snap/enable_installment_mandiri');
         $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
         $vtConfig->setIsProduction($isProduction);
 
         $is3ds = $config->getValue('payment/snap/is_3ds', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
         $vtConfig->setIs3ds($is3ds); // selalu true
 
-//        Veritrans_Config::$isSanitized =
-//            Mage::getStoreConfig('payment/snap/enable_sanitized') == '1'
-//                ? true : false;
-
-//$config = new Veritrans_Config();
         $title = $config->getValue('payment/snap/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 //        echo $title;exit();
@@ -116,30 +95,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $customer_details['phone']            = $order_billing_address
             ->getTelephone();
 
-        /*dummy data*/
-//        $billing_address['first_name']   = 'testfirst';
-//        $billing_address['last_name']    = 'testlast';
-//        $billing_address['address']      = 'tess address';
-//        $billing_address['city']         = 'test city';
-//        $billing_address['postal_code']  = '12345';
-//        $billing_address['country_code'] = $this->convert_country_code('IN');
-//        $billing_address['phone']        = '08123123123';
-
-//        $shipping_address['first_name']   = 'testfirst';
-//        $shipping_address['last_name']    = 'testlast';
-//        $shipping_address['address']      = 'tess address';
-//        $shipping_address['city']         = 'test city';
-//        $shipping_address['postal_code']  = '12345';
-//        $shipping_address['country_code'] = $this->convert_country_code('IN');
-//        $shipping_address['phone']        = '08123123123';
-
         $customer_details['billing_address']  = $billing_address;
         $customer_details['shipping_address'] = $shipping_address;
-//        $customer_details['first_name']       = 'testfirst';
-//        $customer_details['last_name']        = 'testlast';
-//        $customer_details['email']            = 'test@test.com';
-//        $customer_details['phone']            = '08123123123';
-        /*dummy data*/
 
         $items               = $quote->getAllItems();
 //        var_dump($items);exit();
@@ -148,16 +105,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $tax_amount = $quote->getTaxAmount();
 
         $item_details = array();
-
-        /*dummy data*/
-//        $item = array(
-//            'id'       => '123',
-//            'price'    => 100000,
-//            'quantity' => 1,
-//            'name'     => 'dummy product'
-//        );
-//        $item_details[] = $item;
-        /*dummy data*/
 
         foreach ($items as $each) {
 //            echo print_r($each,true);
@@ -168,11 +115,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
                 'name'     => $this->repString($this->getName($each->getName()))
             );
 
-//            if ($item['quantity'] == 0) continue;
-            // error_log(print_r($each->getProductOptions(), true));
             $item_details[] = $item;
         }
-//        exit();
+
 
         $num_products = count($item_details);
 
