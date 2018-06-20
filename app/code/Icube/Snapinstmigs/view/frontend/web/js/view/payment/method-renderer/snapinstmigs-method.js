@@ -127,11 +127,19 @@ define(
                                         },
                                         onClose: function(){
                                             trackResult(data, merchant_id, 'installment_migs', 'close');
-                                            messageList.addErrorMessage({
-                                                message: 'customer closed the popup without finishing the payment'
+                                            $.ajax({
+                                                url: url.build('snap/payment/cancel'),
+                                                cache: false,
+                                                success: function(){
+                                                    messageList.addErrorMessage({
+                                                        message: 'customer closed the popup without finishing the payment'
+                                                    });
+                                                    console.log('customer closed the popup without finishing the payment');
+                                                    window.location.replace(url.build('checkout/onepage/failure'));
+                                                
+                                                }
+
                                             });
-                                            window.location.replace(url.build('checkout/onepage/failure'));
-                                            console.log('customer closed the popup without finishing the payment');
                                         }
                                     });
                                 var snapExecuted = true;

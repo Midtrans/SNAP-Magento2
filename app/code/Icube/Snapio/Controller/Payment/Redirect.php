@@ -15,10 +15,14 @@ class Redirect extends \Magento\Framework\App\Action\Action
     /** @var \Magento\Framework\View\Result\PageFactory  */
     protected $_checkoutSession;
     protected $_logger;
+    protected $_coreSession;
 
-    public function __construct(\Magento\Framework\App\Action\Context $context)
-    {
+    public function __construct(
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Framework\Session\SessionManagerInterface $coreSession
+    ){
         parent::__construct($context);
+        $this->_coreSession = $coreSession;
     }
 
     public function execute()
@@ -81,6 +85,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
         //$prefix = $config->getValue('payment/snapio/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         //$transaction_details['order_id'] = $prefix.$orderIncrementId;
         $transaction_details['order_id'] = $orderIncrementId;
+        $this->setValue($orderIncrementId);
 
         $order_billing_address = $quote->getBillingAddress();
         $billing_address = array();
@@ -319,6 +324,11 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
 //        $page_object = $this->resultFactory->create();;
 //        return $page_object;
+    }
+
+    public function setValue($order_id){
+        $this->_coreSession->start();
+        $this->_coreSession->setMessage($order_id);
     }
 
     public function setSessionData($key, $value)
