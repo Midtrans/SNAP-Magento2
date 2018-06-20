@@ -101,6 +101,7 @@ define(
                                     snap.pay(token, 
                                     {
                                         skipOrderSummary : true,
+                                        showOrderId : true,
                                         onSuccess: function(result){
                                             trackResult(data, merchant_id, 'fullpayment', 'success', result);
                                             messageList.addSuccessMessage({
@@ -126,12 +127,22 @@ define(
                                             console.log(result.status_message);    
                                         },
                                         onClose: function(){
+                                            console.log("get to onclose")
                                             trackResult(data, merchant_id, 'fullpayment', 'close');
-                                            messageList.addErrorMessage({
-                                                message: 'customer closed the popup without finishing the payment'
+                                            $.ajax({
+                                                url: url.build('snap/payment/cancel'),
+                                                cache: false,
+                                                success: function(){
+                                                    messageList.addErrorMessage({
+                                                        message: 'customer closed the popup without finishing the payment'
+                                                    });
+                                                    console.log('customer closed the popup without finishing the payment');
+                                                    window.location.replace(url.build('checkout/onepage/failure'));
+                                                
+                                                }
+
                                             });
-                                            window.location.replace(url.build('checkout/onepage/failure'));
-                                            console.log('customer closed the popup without finishing the payment');
+                                            
                                         }
                                     });
                                 var snapExecuted = true;
