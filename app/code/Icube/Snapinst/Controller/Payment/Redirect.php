@@ -267,11 +267,11 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $payloads['customer_details']    = $customer_details;
 
          if($oneClick == 1){
-            $credit_card['secure'] = true;
             $credit_card['save_card'] = true;
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         }
-
+        
+        $credit_card['secure'] = true;
         $payloads['credit_card'] = $credit_card;
 
         if($customExpiry){
