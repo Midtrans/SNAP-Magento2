@@ -579,11 +579,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         return $country_code;
     }
 
-    public function setValue($order_id){
-        $this->_coreSession->start();
-        $this->_coreSession->setMessage($order_id);
-    }
-
     private function repString($str){
         return preg_replace("/[^a-zA-Z0-9]+/", " ", $str);
     }
