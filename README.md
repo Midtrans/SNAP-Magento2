@@ -1,7 +1,7 @@
 Snap Magento2 plugin
 =========================
 
-### Copyright
+### Copyrights
 
 Midtrans Payment Extension for Magento 2" is owned and developed by ICUBE (PT Inovasi Informasi Indonesia -http://www.icubeonline.com), a private company established in Jakarta, Indonesia. Unless expressly stated to the contrary, the copyright and other intellectual property rights (such as, design rights, trademarks, patents, etc.) in any material provided on "Midtrans Payment Extension for Magento 2" remains the property of ICUBE. ICUBE owned material on "Midtrans Payment Extension for Magento 2" including text, images and source code, may not be printed, copied, reproduced, republished, downloaded, posted, displayed, modified, reused, broadcast or transmitted in any way, unless prior permission has been given. Please contact E-mail : sales@icube.us for further details on obtaining such permission. Unauthorized use by the third party entitles ICUBE to take certain legal steps.
 
