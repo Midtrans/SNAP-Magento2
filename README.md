@@ -1,7 +1,7 @@
 Snap Magento2 plugin
 =========================
 
-### Copyrights
+### Copyright
 
 Midtrans Payment Extension for Magento 2" is owned and developed by ICUBE (PT Inovasi Informasi Indonesia -http://www.icubeonline.com), a private company established in Jakarta, Indonesia. Unless expressly stated to the contrary, the copyright and other intellectual property rights (such as, design rights, trademarks, patents, etc.) in any material provided on "Midtrans Payment Extension for Magento 2" remains the property of ICUBE. ICUBE owned material on "Midtrans Payment Extension for Magento 2" including text, images and source code, may not be printed, copied, reproduced, republished, downloaded, posted, displayed, modified, reused, broadcast or transmitted in any way, unless prior permission has been given. Please contact E-mail : sales@icube.us for further details on obtaining such permission. Unauthorized use by the third party entitles ICUBE to take certain legal steps.
 
@@ -27,11 +27,14 @@ Midtrans payment gateway is an online payment gateway that is highly concerned w
 
 3. Copy the 'app' & 'lib' folders into magento root folder
 
-4. In your Magento admin area, enable the Veritrans plug-in and insert your merchant details (Server key and client key)
+4. In your Magento admin area, enable the Veritrans plug-in and insert your merchant details (Server key and client key) in the Menu "Stores" > "Configuration" > "Sales" > "Payment Method" > Tab "Midtrans Snap" or "Midtrans Snap Installment" or "Midtrans Snap Installment migs" or "Midtrans Snap Installment Offline" or "Midtrans Snapmigs" according to your needs.
 
 5. Login into your Veritrans account and change the Payment Notification URL in Settings to `http://[your shop's homepage]/snap/payment/notification`.
 
 #### Get help
 
-* [Veritrans documentation](http://docs.midtrans.com)
-* Technical support [support@midtrans.com](mailto:support@midtrans.com)
+* [General Documentation Midtrans](http://docs.midtrans.com)
+* Technical Support Team Midtrans [support@midtrans.com](mailto:support@midtrans.com)
+* [SNAP Documentation Product Midtrans](https://snap-docs.midtrans.com/)
+* [CoreAPI Documentation Product Midtrans](https://api-docs.midtrans.com/)
+* [Mobile Documentation Product Midtrans](http://mobile-docs.midtrans.com/)
