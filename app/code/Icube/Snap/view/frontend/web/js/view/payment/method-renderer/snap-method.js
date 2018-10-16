@@ -60,6 +60,7 @@ define(
 
                         function trackResult(token, merchant_id, plugin_name, status, result) {
                             var eventNames = {
+                                pay: 'pg-pay',
                                 success: 'pg-success',
                                 pending: 'pg-pending',
                                 error: 'pg-error',
@@ -84,13 +85,7 @@ define(
                         var token = data.substring(0,36)
                         console.log("token = " + token);
 
-                        mixpanel.track(
-                            'pg-pay', {
-                              merchant_id: merchant_id,
-                              plugin_name: "fullpayment",
-                              snap_token: data
-                            }
-                        );
+                        trackResult(data, merchant_id, 'fullpayment', 'pay', null);
                             
                         var retryCount = 0;
                         var snapExecuted = false;
