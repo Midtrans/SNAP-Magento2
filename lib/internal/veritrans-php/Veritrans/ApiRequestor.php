@@ -38,7 +38,7 @@ class Veritrans_ApiRequestor {
 
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt ($ch, CURLOPT_CAINFO,
-        dirname(__FILE__) . "/../data/cacert.pem");
+        // dirname(__FILE__) . "/../data/cacert.pem");
 
     $result = curl_exec($ch);
     // curl_close($ch);
