@@ -74,81 +74,61 @@ class Notification extends \Magento\Framework\App\Action\Action
         $_info = "status : ".$transaction." , order : ".$orderId.", payment type : ".$payment_type;
         $logger->info( $_info );
         ##log notif snap
-
         if ($transaction == 'capture') {
-            $order->setInstallmentTenor($notif->installment_term);
-            if ($fraud == 'challenge') {
-                $order->setStatus(\Magento\Sales\Model\Order::STATE_PAYMENT_REVIEW);
+          $order->setInstallmentTenor($notif->installment_term);
+          if ($fraud == 'challenge') {
+            $order->setStatus(\Magento\Sales\Model\Order::STATE_PAYMENT_REVIEW);
+          }
+          else if ($fraud == 'accept') {
+            if($order->canInvoice() && !$order->hasInvoices()) {
+              $invoice = $this->_objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
+              $invoice->register();
+              $invoice->save();
+              $invoice->pay();
+              $transactionSave = $this->_objectManager->create('Magento\Framework\DB\Transaction')
+                  ->addObject($invoice)
+                  ->addObject($invoice->getOrder());
+              $transactionSave->save();
             }
-            else if ($fraud == 'accept') {
-                if($order->canInvoice() && !$order->hasInvoices()) {
-                    $invoice = $this->_objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
-                    $invoice->register();
-                    $invoice->save();
-                    $invoice->pay();
-                    $transactionSave = $this->_objectManager->create(
-                        'Magento\Framework\DB\Transaction'
-                    )->addObject(
-                            $invoice
-                        )->addObject(
-                            $invoice->getOrder()
-                        );
-                    $transactionSave->save();
-                }
-				$order->setData('state', 'processing');
-				$order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
+            $order->setData('state', 'processing');
+            $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
 
-                // Xtento_AdvancedOrderStatus compatibility
-                       if ($this->registry->registry('advancedorderstatus_notifications')) {
-                           $this->orderCommentSender->send($order);
-                       }
+            // Xtento_AdvancedOrderStatus compatibility
+            if ($this->registry->registry('advancedorderstatus_notifications')) {
+               $this->orderCommentSender->send($order);
             }
-        }
-        else if ($transaction == 'cancel' || $transaction == 'deny' ) {
-            $order->setStatus(\Magento\Sales\Model\Order::STATE_CANCELED);
-            $order->addStatusToHistory(\Magento\Sales\Model\Order::STATE_CANCELED);
+          }
         }
         else if ($transaction == 'settlement') {
-
-            if($payment_type != 'credit_card'){
-                if($order->canInvoice() && !$order->hasInvoices()) {
-                    $invoice = $this->_objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
-                    $invoice->register();
-                    $invoice->save();
-                    $invoice->pay();
-                    $transactionSave = $this->_objectManager->create(
-                        'Magento\Framework\DB\Transaction'
-                    )->addObject(
-                            $invoice
-                        )->addObject(
-                            $invoice->getOrder()
-                        );
-                    $transactionSave->save();
-                }
-				$order->setData('state', 'processing');
-				$order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
-                if ($this->registry->registry('advancedorderstatus_notifications')) {
-                    $this->orderCommentSender->send($order);
-                }
-                
+          if($payment_type != 'credit_card'){
+            if($order->canInvoice() && !$order->hasInvoices()) {
+              $invoice = $this->_objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
+              $invoice->register();
+              $invoice->save();
+              $invoice->pay();
+              $transactionSave = $this->_objectManager->create('Magento\Framework\DB\Transaction')
+                  ->addObject($invoice)
+                  ->addObject($invoice->getOrder());
+              $transactionSave->save();
             }
+            $order->setData('state', 'processing');
+            $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
+            if ($this->registry->registry('advancedorderstatus_notifications')) {
+                $this->orderCommentSender->send($order);
+            }
+          }
         }
         else if ($transaction == 'pending') {
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-            //            $order->sendOrderUpdateEmail(true,'Thank you, your payment is successfully processed.');
         }
-        else if ($transaction == 'cancel') {
+        else if ($transaction == 'cancel' || $transaction == 'deny' || $transaction == 'expire') {
+          if ($order->canCancel()) {
             $order->setStatus(\Magento\Sales\Model\Order::STATE_CANCELED);
-        }
-        else if ($transaction == 'expire') {
-            $order->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
-        }
-        else {
-            $order->setStatus(\Magento\Sales\Model\Order::STATUS_FRAUD);
+            $order->addStatusToHistory(\Magento\Sales\Model\Order::STATE_CANCELED);
+          }
         }
         error_log('before order save');
         $order->save();
         error_log('order save sukses');
-
     }
 }
