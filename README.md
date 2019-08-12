@@ -17,7 +17,7 @@ Midtrans payment gateway is an online payment gateway that is highly concerned w
 #### Minimum Requirements
 
 * This plugin is tested with Magento version 2.3.x
-###### Note : if you are not using Magento Version 2.3.x, please go to this branch [magento2-pre-version-2.3](https://github.com/Midtrans/SNAP-Magento2/tree/magento2-pre-version-2.3)
+> ###### Note : if you are using Magento 2 version less than 2.3.x (2.0.x, 2.1.x, 2.2.x) and notification doesn't seem to work, please try this version: [magento2-pre-version-2.3](https://github.com/Midtrans/SNAP-Magento2/tree/magento2-pre-version-2.3)
 
 #### Manual Instalation
 
