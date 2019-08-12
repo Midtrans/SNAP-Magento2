@@ -96,7 +96,10 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
             }
             $order->setData('state', 'processing');
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
-
+            
+            $emailSender = $this->_objectManager->create('\Magento\Sales\Model\Order\Email\Sender\OrderSender');
+            $emailSender->send($order);
+            
             // Xtento_AdvancedOrderStatus compatibility
             if ($this->registry->registry('advancedorderstatus_notifications')) {
                $this->orderCommentSender->send($order);
