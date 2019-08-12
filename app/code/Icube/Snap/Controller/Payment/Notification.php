@@ -4,13 +4,17 @@ namespace Icube\Snap\Controller\Payment;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Controller\ResultFactory;
 
+use Magento\Framework\App\CsrfAwareActionInterface;
+use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Request\InvalidRequestException;
+
 $object_manager = \Magento\Framework\App\ObjectManager::getInstance();
 $filesystem = $object_manager->get('Magento\Framework\Filesystem');
 $root = $filesystem->getDirectoryRead(DirectoryList::ROOT);
 $lib_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans.php');
 require_once($lib_file);
 
-class Notification extends \Magento\Framework\App\Action\Action
+class Notification extends \Magento\Framework\App\Action\Action implements CsrfAwareActionInterface
 {
     /**
      * @var \Magento\Framework\Registry
@@ -116,6 +120,9 @@ class Notification extends \Magento\Framework\App\Action\Action
             if ($this->registry->registry('advancedorderstatus_notifications')) {
                 $this->orderCommentSender->send($order);
             }
+
+            $emailSender = $this->_objectManager->create('\Magento\Sales\Model\Order\Email\Sender\OrderSender');
+            $emailSender->send($order);
           }
         }
         else if ($transaction == 'pending') {
@@ -130,5 +137,15 @@ class Notification extends \Magento\Framework\App\Action\Action
         error_log('before order save');
         $order->save();
         error_log('order save sukses');
+    }
+
+    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
+    {
+        return null;
+    }
+
+    public function validateForCsrf(RequestInterface $request): ?bool
+    {
+        return true;
     }
 }
