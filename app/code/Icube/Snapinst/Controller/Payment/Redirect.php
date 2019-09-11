@@ -74,7 +74,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
 //        echo $title;exit();
         $oneClick = $config->getValue('payment/snapinst/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $bank = $config->getValue('payment/snapinst/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-         $customExpiry = $config->getValue('payment/snapinst/custom_expiry', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
@@ -276,22 +275,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         
         $credit_card['secure'] = true;
         $payloads['credit_card'] = $credit_card;
-
-        if($customExpiry){
-           
-           $customExpiry = explode(" ", $customExpiry);
-           $expiry_unit =  $customExpiry[1];
-           $expiry_duration = (int)$customExpiry[0];
-           error_log($expiry_unit . $expiry_duration);
-
-           $time = time();
-           $payloads['expiry'] = array(
-            'start_time' => date("Y-m-d H:i:s O",$time),
-            'unit' => $expiry_unit, 
-            'duration'  => (int)$expiry_duration
-            );
-
-        }
 
         try {
 //            $this->_logger->addDebug('some text or variable');
