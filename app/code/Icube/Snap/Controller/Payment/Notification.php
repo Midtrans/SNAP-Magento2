@@ -43,18 +43,15 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
      */
     public function execute()
     {
-        echo 'you did it';
-        error_log('notif url');
+        echo 'OK';
         $om = $this->_objectManager;
         //        $session = $om->get('Magento\Checkout\Model\Session');
         $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        error_log($isProduction);
         $vtConfig->setIsProduction($isProduction);
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        error_log($serverKey);
         $vtConfig->setServerKey($serverKey);
         $notif = $om->get('Veritrans_Notification');
         error_log(print_r($notif,TRUE));
@@ -137,9 +134,7 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
             $order->addStatusToHistory(\Magento\Sales\Model\Order::STATE_CANCELED);
           }
         }
-        error_log('before order save');
         $order->save();
-        error_log('order save sukses');
     }
 
     public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException

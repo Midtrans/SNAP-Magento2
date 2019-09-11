@@ -207,11 +207,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
            $customExpiry = explode(" ", $customExpiry);
            $expiry_unit =  $customExpiry[1];
            $expiry_duration = (int)$customExpiry[0];
-           error_log($expiry_unit . $expiry_duration);
 
-           $time = time();
            $payloads['expiry'] = array(
-            'start_time' => date("Y-m-d H:i:s O",$time),
             'unit' => $expiry_unit, 
             'duration'  => (int)$expiry_duration
             );
@@ -244,7 +241,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
         }
         catch (Exception $e) {
             error_log($e->getMessage());
-//            Mage::log('error:'.print_r($e->getMessage(),true),null,'snap.log',true);
+//           Mage::log('error:'.print_r($e->getMessage(),true),null,'snap.log',true);
+            echo $e->getMessage();            
         }
 
 //        $page_object = $this->resultFactory->create();;
