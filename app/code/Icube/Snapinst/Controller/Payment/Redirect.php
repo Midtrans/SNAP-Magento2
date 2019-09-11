@@ -250,7 +250,10 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $installment = array();
         $installment['required'] = true;
         $installment['terms'] = array(
-
+            'bca' => $terms,
+            'bri' => $terms,
+            'maybank' => $terms,
+            'mega' => $terms,
             'bni' => $terms,
             'mandiri' => $terms,
             'cimb' => $terms 
