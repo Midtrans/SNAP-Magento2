@@ -75,6 +75,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $oneClick = $config->getValue('payment/snapio/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $bank = $config->getValue('payment/snapio/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $binFilter = $config->getValue('payment/snapio/bin_filter', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $minAmount = $config->getValue('payment/snapio/min_amount', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
@@ -247,23 +248,19 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         $transaction_details['gross_amount'] = $totalPrice;
 
-        $terms      = array(3,6,9,12,18,24);
-        error_log("terms");
-        error_log(print_r($terms,TRUE));
+        if ($minAmount <= $totalPrice){
+            $terms      = array(3,6,9,12,18,24);
+            $installment = array();
+            $installment['required'] = true;
+            $installment['terms'] = array(
+                'offline' => $terms
+                );
+            
+            $credit_card['installment'] = $installment;
+            $whitelist_bin = explode(",", $binFilter);
+            $credit_card['whitelist_bins'] = $whitelist_bin;
+        }
 
-        $installment = array();
-        $installment['required'] = true;
-        $installment['terms'] = array(
-
-            'offline' => $terms
-            );
-
-        
-        $credit_card['installment'] = $installment;
-        $whitelist_bin = explode(",", $binFilter);
-        error_log(print_r($whitelist_bin,TRUE));
-        $credit_card['whitelist_bins'] = $whitelist_bin;
-        
         $payloads = array();
         $payloads['transaction_details'] = $transaction_details;
         $payloads['enabled_payments']    = array('credit_card');

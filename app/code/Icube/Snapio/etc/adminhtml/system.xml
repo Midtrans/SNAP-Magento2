@@ -32,6 +32,10 @@
                     <label>New Order Status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
                 </field>
+                <field id="min_amount" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Minimum Amount</label>
+                    <tooltip>Minimum amount of transaction</tooltip>
+                </field>
                 <field id="bin_filter" translate="label" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bin Filter</label>
                     <comment><![CDATA[Fill with CC BIN numbers (or bank name) that you want to allow to use this payment button.<br/>Separate BIN number with coma Example: 4,5,4811,bni,mandiri.]]></comment>

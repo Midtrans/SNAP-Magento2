@@ -73,7 +73,8 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $serverKey = $config->getValue('payment/snapinst/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 //        echo $title;exit();
         $oneClick = $config->getValue('payment/snapinst/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $bank = $config->getValue('payment/snapinst/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $bank = $config->getValue('payment/snapinst/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);        
+        $minAmount = $config->getValue('payment/snapinst/min_amount', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
@@ -245,22 +246,21 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         $transaction_details['gross_amount'] = $totalPrice;
 
-        $terms      = array(3,6,9,12,15,18,21,24,27,30,33,36);
-        $installment = array();
-        $installment['required'] = true;
-        $installment['terms'] = array(
-            'bca' => $terms,
-            'bri' => $terms,
-            'maybank' => $terms,
-            'mega' => $terms,
-            'bni' => $terms,
-            'mandiri' => $terms,
-            'cimb' => $terms 
-            );
-
-        
-        $credit_card['installment'] = $installment;
-
+        if ($minAmount <= $totalPrice){
+            $terms      = array(3,6,9,12,15,18,21,24,27,30,33,36);
+            $installment = array();
+            $installment['required'] = true;
+            $installment['terms'] = array(
+                'bca' => $terms,
+                'bri' => $terms,
+                'maybank' => $terms,
+                'mega' => $terms,
+                'bni' => $terms,
+                'mandiri' => $terms,
+                'cimb' => $terms 
+                );
+             $credit_card['installment'] = $installment;
+        }
         
         $payloads = array();
         $payloads['transaction_details'] = $transaction_details;

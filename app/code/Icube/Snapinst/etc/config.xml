@@ -11,6 +11,7 @@
                 <order_status>pending</order_status>
                 <instructions>You will be redirected to Midtrans Page.</instructions>
                 <payment_action>true</payment_action>
+                <min_amount>500000</min_amount>
                 <is_production>0</is_production>
                 <is_3ds>1</is_3ds>
                 <model>Icube\Snapinst\Model\Snapinst</model>
