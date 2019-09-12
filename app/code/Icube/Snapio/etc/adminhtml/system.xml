@@ -34,10 +34,13 @@
                 </field>
                 <field id="bin_filter" translate="label" type="text" sortOrder="14" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Bin Filter</label>
+                    <comment><![CDATA[Fill with CC BIN numbers (or bank name) that you want to allow to use this payment button.<br/>Separate BIN number with coma Example: 4,5,4811,bni,mandiri.]]></comment>
                 </field>
                 <field id="one_click" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enable One click</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>Save Card</label>
+                    <comment>Leave it disabled if you are not sure!</comment>
+                    <tooltip>This will allow your customer to save their card on the payment popup, for faster payment flow on the following purchase.</tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                 </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Payment from Applicable Countries</label>

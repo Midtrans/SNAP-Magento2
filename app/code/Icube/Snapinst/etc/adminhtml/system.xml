@@ -20,8 +20,10 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
                 <field id="one_click" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enable One click</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>Save Card</label>
+                    <comment>Leave it disabled if you are not sure!</comment>
+                    <tooltip>This will allow your customer to save their card on the payment popup, for faster payment flow on the following purchase.</tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                 </field>
                 <field id="merchant_id" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Merchant Id</label>

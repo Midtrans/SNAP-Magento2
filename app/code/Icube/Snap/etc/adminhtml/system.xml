@@ -29,15 +29,19 @@
                     <label>Client Key</label>
                 </field>
                 <field id="is_3ds" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enable 3D Secure</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>3D Secure</label>
+                    <comment><![CDATA[You must enable 3D Secure.<br/>Please contact us if you wish to disable this feature in the Production environment.]]></comment>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                 </field>
                 <field id="one_click" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
-                    <label>Enable One click</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <label>Save Card</label>
+                    <comment>Leave it disabled if you are not sure!</comment>
+                    <tooltip>This will allow your customer to save their card on the payment popup, for faster payment flow on the following purchase.</tooltip>
+                    <source_model>Magento\Config\Model\Config\Source\Enabledisable</source_model>
                 </field>
                 <field id="custom_expiry" translate="label" type="text" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Custom Expiry</label>
+                    <tooltip>This will allow you to set custom duration on how long the transaction available to be paid.</tooltip>
                 </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0" canRestore="1">
                     <label>Payment from Applicable Countries</label>
