@@ -76,6 +76,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $bank = $config->getValue('payment/snapio/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $binFilter = $config->getValue('payment/snapio/bin_filter', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $minAmount = $config->getValue('payment/snapio/min_amount', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+        $installTerms = $config->getValue('payment/snapio/term', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
         $vtConfig->setServerKey($serverKey);
 //        $vtConfig->setIs3Ds(false);
@@ -247,9 +248,17 @@ class Redirect extends \Magento\Framework\App\Action\Action
         }
 
         $transaction_details['gross_amount'] = $totalPrice;
-
         if ($minAmount <= $totalPrice){
-            $terms      = array(3,6,9,12,18,24);
+            if ($bank !== '') {
+                $credit_card['bank'] = $bank;
+            }
+
+            $termsStr = explode(',', $installTerms);
+            $terms = array();
+            foreach ($termsStr as $termStr) {
+                $terms[] = (int)$termStr;
+            };
+
             $installment = array();
             $installment['required'] = true;
             $installment['terms'] = array(
