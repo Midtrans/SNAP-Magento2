@@ -199,7 +199,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $credit_card['save_card'] = true;
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         } 
-        $credit_card['secure'] = true;
         $payloads['credit_card'] = $credit_card;
  
         if($customExpiry){
@@ -221,7 +220,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
             $logger = new \Zend\Log\Logger();
             $logger->addWriter($writer);
-            error_log(print_r($payloads,true));
+            // error_log(print_r($payloads,true));
             $logger->info('$payloads:'.print_r($payloads,true));
 //            var_dump($payloads);
 //            Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);

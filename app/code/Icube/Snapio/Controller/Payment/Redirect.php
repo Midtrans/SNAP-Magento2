@@ -249,7 +249,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
         $transaction_details['gross_amount'] = $totalPrice;
         if ($minAmount <= $totalPrice){
-            if ($bank !== '') {
+            if (!empty($bank)) {
                 $credit_card['bank'] = $bank;
             }
 
@@ -266,8 +266,11 @@ class Redirect extends \Magento\Framework\App\Action\Action
                 );
             
             $credit_card['installment'] = $installment;
-            $whitelist_bin = explode(",", $binFilter);
-            $credit_card['whitelist_bins'] = $whitelist_bin;
+
+            if (!empty($binFilter)) {
+              $whitelist_bin = explode(',', $binFilter);
+              $credit_card['whitelist_bins'] = $whitelist_bin;
+            }
         }
 
         $payloads = array();
