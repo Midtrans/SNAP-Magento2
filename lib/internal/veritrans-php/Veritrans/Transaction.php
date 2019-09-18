@@ -1,45 +1,58 @@
 <?php
-use Magento\Framework\App\Filesystem\DirectoryList;
-$object_manager = \Magento\Framework\App\ObjectManager::getInstance();
-$filesystem = $object_manager->get('Magento\Framework\Filesystem');
-$root = $filesystem->getDirectoryRead(DirectoryList::ROOT);
-$lib_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans/ApiRequestor.php');
-$conf_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans/Config.php');
-require_once($lib_file);
-require_once($conf_file);
-
+/**
+ * API methods to get transaction status, approve and cancel transactions
+ */
 class Veritrans_Transaction {
 
-    public static function status($id)
-    {
-        $om = \Magento\Framework\App\ObjectManager::getInstance();
-        $req = $om->create('Veritrans_ApiRequestor');
-        $conf = $om->create('Veritrans\Veritrans_Config');
-        return $req->get(
-            $conf->getBaseUrl() . '/' . $id . '/status',
-            $conf->getServerKey(),
-            false);
-    }
+  /**
+   * Retrieve transaction status
+   * @param string $id Order ID or transaction ID
+   * @return mixed[]
+   */
+  public static function status($id)
+  {
+    return Veritrans_ApiRequestor::get(
+        Veritrans_Config::getBaseUrl() . '/' . $id . '/status',
+        Veritrans_Config::$serverKey,
+        false);
+  }
 
-    public static function approve($id)
-    {
-        $om = \Magento\Framework\App\ObjectManager::getInstance();
-        $req = $om->create('Veritrans_ApiRequestor');
-        $conf = $om->create('Veritrans_Config');
-        return $req->post(
-            $conf->getBaseUrl() . '/' . $id . '/approve',
-            $conf->getServerKey(),
-            false)->status_code;
-    }
+  /**
+   * Approve challenge transaction
+   * @param string $id Order ID or transaction ID
+   * @return string
+   */
+  public static function approve($id)
+  {
+    return Veritrans_ApiRequestor::post(
+        Veritrans_Config::getBaseUrl() . '/' . $id . '/approve',
+        Veritrans_Config::$serverKey,
+        false)->status_code;
+  }
 
-    public static function cancel($id)
-    {
-        $om = \Magento\Framework\App\ObjectManager::getInstance();
-        $req = $om->create('Veritrans_ApiRequestor');
-        $conf = $om->create('Veritrans_Config');
-        return $req->post(
-            $conf->getBaseUrl() . '/' . $id . '/cancel',
-            $conf->getServerKey(),
-            false)->status_code;
-    }
+  /**
+   * Cancel transaction before it's settled
+   * @param string $id Order ID or transaction ID
+   * @return string
+   */
+  public static function cancel($id)
+  {
+    return Veritrans_ApiRequestor::post(
+        Veritrans_Config::getBaseUrl() . '/' . $id . '/cancel',
+        Veritrans_Config::$serverKey,
+        false)->status_code;
+  }
+  
+  /**
+   * Expire transaction before it's setteled
+   * @param string $id Order ID or transaction ID
+   * @return mixed[]
+   */
+  public static function expire($id)
+  {
+    return Veritrans_ApiRequestor::post(
+        Veritrans_Config::getBaseUrl() . '/' . $id . '/expire',
+        Veritrans_Config::$serverKey,
+        false);
+  }
 }

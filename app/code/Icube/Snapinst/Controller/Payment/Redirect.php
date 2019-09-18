@@ -33,53 +33,26 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $quote2 = $session->getLastRealOrder();
 //       echo 'QUOTE ID : '.$quote->getId();
 
-
-        $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
-//        $orderIncrementId = $quote->getReservedOrderId();
         $orderIncrementId = $quote2->getIncrementId();
         $orderId = $quote2->getId();
         $quote = $om->create('Magento\Sales\Model\Order')->load($orderId);
-//        echo $quote->getId();exit();
-//        $order = Mage::getModel('sales/order')
-//            ->loadByIncrementId($orderIncrementId);
-//        $sessionId = Mage::getSingleton('core/session');
 
-        /* send an order email when redirecting to payment page although payment
-           has not been completed. */
-//        $order->setState(Mage::getStoreConfig('payment/snap/'),true,
-//            'New order, waiting for payment.');
-//        $order->sendNewOrderEmail();
-//        $order->setEmailSent(true);
-
-//        $api_version = Mage::getStoreConfig('payment/snap/api_version');
-//        $payment_type = Mage::getStoreConfig('payment/snap/payment_types');
-//        $enable_installment = Mage::getStoreConfig('payment/snap/enable_installment');
-//        $is_enabled_bni = Mage::getStoreConfig('payment/snap/enable_installment_bni');
-//        $is_enabled_mandiri = Mage::getStoreConfig('payment/snap/enable_installment_mandiri');
         $isProduction = $config->getValue('payment/snapinst/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        $vtConfig->setIsProduction($isProduction);
-
-        $is3ds = $config->getValue('payment/snapinst/is_3ds', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        $vtConfig->setIs3ds($is3ds); // selalu true
-
-//        Veritrans_Config::$isSanitized =
-//            Mage::getStoreConfig('payment/snap/enable_sanitized') == '1'
-//                ? true : false;
-
-//$config = new Veritrans_Config();
+        // $is3ds = $config->getValue('payment/snapinst/is_3ds', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
         $title = $config->getValue('payment/snapinst/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $serverKey = $config->getValue('payment/snapinst/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-//        echo $title;exit();
         $oneClick = $config->getValue('payment/snapinst/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $bank = $config->getValue('payment/snapinst/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);        
         $minAmount = $config->getValue('payment/snapinst/min_amount', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-        $vtConfig->setServerKey($serverKey);
-//        $vtConfig->setIs3Ds(false);
-        $vtConfig->setIsSanitized(false);
-
+        $vtConfig = $om->get('Veritrans_Config');
+        $vtConfig::$isProduction = $isProduction;
+        // $vtConfig::$is3ds = $is3ds;
+        $vtConfig::$serverKey = $serverKey;
+        $vtConfig::$isSanitized = false;
+ 
         $transaction_details = array();
         $prefix = $config->getValue('payment/snapinst/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $transaction_details['order_id'] = $prefix.$orderIncrementId;
@@ -285,7 +258,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $logger->info('$payloads:'.print_r($payloads,true));
 //            var_dump($payloads);
 //            Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);
-            $snap = $om->get('Veritrans\Veritrans_Snap');
+            $snap = $om->get('Veritrans_Snap');
             $token = $snap->getSnapToken($payloads);
             $logger->info('snap token:'.print_r($token,true));
 //            var_dump($redirUrl);exit();

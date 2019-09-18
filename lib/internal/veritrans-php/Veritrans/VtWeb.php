@@ -1,28 +1,39 @@
 <?php
-namespace Veritrans;
-
-use Magento\Framework\App\Filesystem\DirectoryList;
-$object_manager = \Magento\Framework\App\ObjectManager::getInstance();
-$filesystem = $object_manager->get('Magento\Framework\Filesystem');
-$root = $filesystem->getDirectoryRead(DirectoryList::ROOT);
-$lib_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans/ApiRequestor.php');
-require_once($lib_file);
-
+/**
+ * Create VtWeb transaction and return redirect url
+ *
+ */
 class Veritrans_VtWeb {
 
+  /**
+   * Create VT-Web transaction
+   *
+   * Example:
+   *
+   * ```php
+   *   $params = array(
+   *     'transaction_details' => array(
+   *       'order_id' => rand(),
+   *       'gross_amount' => 10000,
+   *     )
+   *   );
+   *   $paymentUrl = Veritrans_Vtweb::getRedirectionUrl($params);
+   *   header('Location: ' . $paymentUrl);
+   * ```
+   *
+   * @param array $params Payment options
+   * @return string Redirect URL to VT-Web payment page.
+   * @throws Exception curl error or veritrans error
+   */
   public static function getRedirectionUrl($params)
   {
-      $om = \Magento\Framework\App\ObjectManager::getInstance();
-      $req = $om->get('Veritrans_ApiRequestor');
-      $conf = $om->get('Veritrans\Veritrans_Config');
-      $san = $om->get('Veritrans_Sanitizer');
     $payloads = array(
-        'payment_type' => 'vtweb',
-        'vtweb' => array(
-          // 'enabled_payments' => array('credit_card'),
-          'credit_card_3d_secure' => $conf->getIs3ds()
-        )
-      );
+      'payment_type' => 'vtweb',
+      'vtweb' => array(
+        // 'enabled_payments' => array('credit_card'),
+        'credit_card_3d_secure' => Veritrans_Config::$is3ds
+      )
+    );
 
     if (array_key_exists('item_details', $params)) {
       $gross_amount = 0;
@@ -34,18 +45,15 @@ class Veritrans_VtWeb {
 
     $payloads = array_replace_recursive($payloads, $params);
 
-    if ($conf->getIsSanitized()) {
-        $san->jsonRequest($payloads);
+    if (Veritrans_Config::$isSanitized) {
+      Veritrans_Sanitizer::jsonRequest($payloads);
     }
-    $result = $req->post(
-        $conf->getBaseUrl() . '/charge',
-        $conf->getServerKey(),
+
+    $result = Veritrans_ApiRequestor::post(
+        Veritrans_Config::getBaseUrl() . '/charge',
+        Veritrans_Config::$serverKey,
         $payloads);
 
-      echo '$conf->getBaseUrl() :'.$conf->getBaseUrl();
-      echo '$conf->getServerKey() :'.$conf->getServerKey();
-      echo '$payloads :'.print_r($payloads,true);
-      echo '$result :'.print_r($result,true);
     return $result->redirect_url;
   }
 }

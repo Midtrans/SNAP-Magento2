@@ -69,27 +69,20 @@ $customer_details = array(
     'shipping_address' => $shipping_address
     );
 
-// Fill transaction details
-$transaction = array(
+// Fill SNAP API parameter
+$params = array(
     'transaction_details' => $transaction_details,
     'customer_details' => $customer_details,
     'item_details' => $item_details,
     );
 
 try {
-  // Redirect to Veritrans VTWeb page
-  header('Location: ' . Veritrans_VtWeb::getRedirectionUrl($transaction));
+  // Get Snap Payment Page URL
+  $paymentUrl = Veritrans_Snap::createTransaction($params)->redirect_url;
+  
+  // Redirect to Snap Payment Page
+  header('Location: ' . $paymentUrl);
 }
 catch (Exception $e) {
   echo $e->getMessage();
-  if(strpos ($e->getMessage(), "Access denied due to unauthorized")){
-      echo "<code>";
-      echo "<h4>Please set real server key from sandbox</h4>";
-      echo "In file: " . __FILE__;
-      echo "<br>";
-      echo "<br>";
-      echo htmlspecialchars('Veritrans_Config::$serverKey = \'<your server key>\';');
-      die();
-}
-
 }

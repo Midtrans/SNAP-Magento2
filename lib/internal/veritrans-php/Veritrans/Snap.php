@@ -1,13 +1,4 @@
 <?php
-namespace Veritrans;
-
-use Magento\Framework\App\Filesystem\DirectoryList;
-$object_manager = \Magento\Framework\App\ObjectManager::getInstance();
-$filesystem = $object_manager->get('Magento\Framework\Filesystem');
-$root = $filesystem->getDirectoryRead(DirectoryList::ROOT);
-$lib_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans/SnapApiRequestor.php');
-require_once($lib_file);
-
 /**
  * Create Snap payment page and return snap token
  *
@@ -33,16 +24,35 @@ class Veritrans_Snap {
    * @return string Snap token.
    * @throws Exception curl error or veritrans error
    */
-  public static function getSnapToken($params)
+  public static function getSnapToken($params) {
+    return (Veritrans_Snap::createTransaction($params)->token);
+  }
+
+  /**
+   * Create Snap payment page, with this version returning full API response
+   *
+   * Example:
+   *
+   * ```php
+   *   $params = array(
+   *     'transaction_details' => array(
+   *       'order_id' => rand(),
+   *       'gross_amount' => 10000,
+   *     )
+   *   );
+   *   $paymentUrl = Veritrans_Snap::getSnapToken($params);
+   * ```
+   *
+   * @param array $params Payment options
+   * @return object Snap response (token and redirect_url).
+   * @throws Exception curl error or veritrans error
+   */
+  public static function createTransaction($params)
   {
-      $om = \Magento\Framework\App\ObjectManager::getInstance();
-      $req = $om->get('Veritrans_SnapApiRequestor');
-      $conf = $om->get('Veritrans\Veritrans_Config');
-      $san = $om->get('Veritrans_Sanitizer');
     $payloads = array(
       'credit_card' => array(
         // 'enabled_payments' => array('credit_card'),
-        'secure' => $conf->getIs3ds()
+        'secure' => Veritrans_Config::$is3ds
       )
     );
 
@@ -54,17 +64,17 @@ class Veritrans_Snap {
       $params['transaction_details']['gross_amount'] = $gross_amount;
     }
 
-    if ($conf->getIsSanitized()) {
-      $san->jsonRequest($params);
+    if (Veritrans_Config::$isSanitized) {
+      Veritrans_Sanitizer::jsonRequest($params);
     }
 
     $params = array_replace_recursive($payloads, $params);
 
-    $result = $req->post(
-        $conf->getSnapBaseUrl() . '/transactions',
-        $conf->getServerKey(),
+    $result = Veritrans_SnapApiRequestor::post(
+        Veritrans_Config::getSnapBaseUrl() . '/transactions',
+        Veritrans_Config::$serverKey,
         $params);
 
-    return $result->token;
-  }
+    return $result;
+  }  
 }

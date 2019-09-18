@@ -4,14 +4,6 @@
  * Better don't use this class directly, use Veritrans_Snap
  */
 
-
-use Magento\Framework\App\Filesystem\DirectoryList;
-$object_manager = \Magento\Framework\App\ObjectManager::getInstance();
-$filesystem = $object_manager->get('Magento\Framework\Filesystem');
-$root = $filesystem->getDirectoryRead(DirectoryList::ROOT);
-$lib_file = $root->getAbsolutePath('lib/internal/veritrans-php/Veritrans/Config.php');
-require_once($lib_file);
-
 class Veritrans_SnapApiRequestor {
 
   /**
@@ -55,21 +47,21 @@ class Veritrans_SnapApiRequestor {
         'Authorization: Basic ' . base64_encode($server_key . ':')
       ),
       CURLOPT_RETURNTRANSFER => 1,
-      CURLOPT_CAINFO => dirname(__FILE__) . "/../data/cacert.pem"
+      // CURLOPT_CAINFO => dirname(__FILE__) . "/../data/cacert.pem"
     );
 
     // merging with Veritrans_Config::$curlOptions
-//    if (count(Veritrans_Config::$curlOptions)) {
-//      // We need to combine headers manually, because it's array and it will no be merged
-//      if (Veritrans_Config::$curlOptions[CURLOPT_HTTPHEADER]) {
-//        $mergedHeders = array_merge($curl_options[CURLOPT_HTTPHEADER], Veritrans_Config::$curlOptions[CURLOPT_HTTPHEADER]);
-//        $headerOptions = array( CURLOPT_HTTPHEADER => $mergedHeders );
-//      } else {
-//        $mergedHeders = array();
-//      }
-//
-//      $curl_options = array_replace_recursive($curl_options, Veritrans_Config::$curlOptions, $headerOptions);
-//    }
+    if (count(Veritrans_Config::$curlOptions)) {
+      // We need to combine headers manually, because it's array and it will no be merged
+      if (Veritrans_Config::$curlOptions[CURLOPT_HTTPHEADER]) {
+        $mergedHeders = array_merge($curl_options[CURLOPT_HTTPHEADER], Veritrans_Config::$curlOptions[CURLOPT_HTTPHEADER]);
+        $headerOptions = array( CURLOPT_HTTPHEADER => $mergedHeders );
+      } else {
+        $mergedHeders = array();
+      }
+
+      $curl_options = array_replace_recursive($curl_options, Veritrans_Config::$curlOptions, $headerOptions);
+    }
 
     if ($post) {
       $curl_options[CURLOPT_POST] = 1;
@@ -85,25 +77,30 @@ class Veritrans_SnapApiRequestor {
     curl_setopt_array($ch, $curl_options);
 
     // For testing purpose
-//    if (class_exists('VT_Tests') && VT_Tests::$stubHttp) {
-//      $result = self::processStubed($curl_options, $url, $server_key, $data_hash, $post);
-//      $info = VT_Tests::$stubHttpStatus;
-//    } else {
+    if (class_exists('VT_Tests') && VT_Tests::$stubHttp) {
+      $result = self::processStubed($curl_options, $url, $server_key, $data_hash, $post);
+      $info = VT_Tests::$stubHttpStatus;
+    } else {
       $result = curl_exec($ch);
       $info = curl_getinfo($ch);
       // curl_close($ch);
-//    }
+    }
+
 
     if ($result === FALSE) {
       throw new Exception('CURL Error: ' . curl_error($ch), curl_errno($ch));
     }
     else {
-      $result_array = json_decode($result);
+      try {
+        $result_array = json_decode($result);
+      } catch (Exception $e) {
+        $message = "API Request Error unable to json_decode API response: ".$result . ' | Request url: '.$url;
+        throw new Exception($message);
+      }
       if ($info['http_code'] != 201) {
-        $message = 'Veritrans Error (' . $info['http_code'] . '): '
-            . implode(',', $result_array->error_messages);
+        $message = 'Midtrans Error (' . $info['http_code'] . '): '
+            . $result . ' | Request url: '.$url;
         throw new Exception($message, $info['http_code']);
-
       }
       else {
         return $result_array;

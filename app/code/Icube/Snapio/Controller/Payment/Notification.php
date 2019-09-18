@@ -41,13 +41,13 @@ class Notification extends \Magento\Framework\App\Action\Action
     {
         $om = $this->_objectManager;
         //        $session = $om->get('Magento\Checkout\Model\Session');
-        $vtConfig = $om->get('Veritrans\Veritrans_Config');
+        $vtConfig = $om->get('Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $isProduction = $config->getValue('payment/Snapio/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        $vtConfig->setIsProduction($isProduction);
+        $vtConfig::$isProduction = $isProduction;
         $serverKey = $config->getValue('payment/snapio/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        $vtConfig->setServerKey($serverKey);
+        $vtConfig::$serverKey = $serverKey;
         $notif = $om->get('Veritrans_Notification');
 
         $prefix = $config->getValue('payment/snapio/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);

@@ -33,8 +33,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $quote2 = $session->getLastRealOrder();
 //       echo 'QUOTE ID : '.$quote->getId();
 
-
-        $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
 //        $orderIncrementId = $quote->getReservedOrderId();
@@ -43,20 +41,17 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $quote = $om->create('Magento\Sales\Model\Order')->load($orderId);
 
         $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        $vtConfig->setIsProduction($isProduction);
-
         $is3ds = $config->getValue('payment/snap/is_3ds', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        $vtConfig->setIs3ds($is3ds); // selalu true
-
         $title = $config->getValue('payment/snap/title', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-//        echo $title;exit();
         $oneClick = $config->getValue('payment/snap/one_click', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $customExpiry = $config->getValue('payment/snap/custom_expiry', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-
-        $vtConfig->setServerKey($serverKey);
-//        $vtConfig->setIs3Ds(false);
-        $vtConfig->setIsSanitized(false);
+        
+        $vtConfig = $om->get('Veritrans_Config');
+        $vtConfig::$isProduction = $isProduction;
+        $vtConfig::$is3ds = $is3ds;
+        $vtConfig::$serverKey = $serverKey;
+        $vtConfig::$isSanitized = false;
 
         $transaction_details = array();
         $transaction_details['order_id'] = $orderIncrementId;
@@ -196,10 +191,9 @@ class Redirect extends \Magento\Framework\App\Action\Action
 
 
          if($oneClick == 1){    
-            $credit_card['save_card'] = true;
+            $payloads['credit_card']['save_card'] = true;
             $payloads['user_id'] = crypt($order_billing_address->getEmail(), $serverKey);
         } 
-        $payloads['credit_card'] = $credit_card;
  
         if($customExpiry){
            
@@ -224,7 +218,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $logger->info('$payloads:'.print_r($payloads,true));
 //            var_dump($payloads);
 //            Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);
-            $snap = $om->get('Veritrans\Veritrans_Snap');
+            $snap = $om->get('Veritrans_Snap');
             $token = $snap->getSnapToken($payloads);
             $logger->info('snap token:'.print_r($token,true));
 //            var_dump($redirUrl);exit();

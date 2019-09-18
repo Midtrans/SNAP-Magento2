@@ -31,7 +31,6 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $session = $om->get('Magento\Checkout\Model\Session');
         $quote2 = $session->getLastRealOrder();
 
-        $vtConfig = $om->get('Veritrans\Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $orderIncrementId = $quote2->getIncrementId();
@@ -48,10 +47,11 @@ class Redirect extends \Magento\Framework\App\Action\Action
         $bank = $config->getValue('payment/snapspec/bank', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $binNumber = $config->getValue('payment/snapspec/bin', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
 
-        $vtConfig->setIsProduction($isProduction);
-        $vtConfig->setIs3ds($is3ds);
-        $vtConfig->setServerKey($serverKey);
-        $vtConfig->setIsSanitized(false);
+        $vtConfig = $om->get('Veritrans_Config');
+        $vtConfig::$isProduction = $isProduction;
+        $vtConfig::$is3ds = $is3ds;
+        $vtConfig::$serverKey = $serverKey;
+        $vtConfig::$isSanitized = false;
 
         $transaction_details = array();
         $transaction_details['order_id'] = $orderIncrementId;
@@ -232,7 +232,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $logger->info('$payloads:'.print_r($payloads,true));
             // var_dump($payloads);
             // Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);
-            $snap = $om->get('Veritrans\Veritrans_Snap');
+            $snap = $om->get('Veritrans_Snap');
             $token = $snap->getSnapToken($payloads);
             $logger->info('snap token:'.print_r($token,true));
 

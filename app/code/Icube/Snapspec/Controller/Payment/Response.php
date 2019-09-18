@@ -68,8 +68,8 @@ class Response extends \Magento\Framework\App\Action\Action
         } else if ( isset($_GET['id']) ) { // BCA klikpay
             $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
-            $veritransconf = $om->create('Veritrans\Veritrans_Config');
-            $veritransconf->setServerKey($config->getValue('payment/vtklikbca/server_key_v2', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)) ;
+            $veritransconf = $om->create('Veritrans_Config');
+            $veritransconf::$serverKey = $config->getValue('payment/vtklikbca/server_key_v2', \Magento\Store\Model\ScopeInterface::SCOPE_STORE) ;
             $data = \Veritrans_Transaction::status($_GET['id']);
             if ($data->transaction_status == 'settlement' ) {
                 return $this->resultRedirectFactory->create()->setPath('checkout/onepage/success');

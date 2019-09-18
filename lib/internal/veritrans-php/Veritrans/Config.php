@@ -1,89 +1,62 @@
 <?php
-namespace Veritrans;
-
+/**
+ * Veritrans Configuration
+ */
 class Veritrans_Config {
 
+  /**
+   * Your merchant's server key
+   * @static
+   */
   public static $serverKey;
+  /**
+   * Your merchant's client key
+   * @static
+   */
   public static $clientKey;
-  public static $apiVersion = 2;
+  /**
+   * true for production
+   * false for sandbox mode
+   * @static
+   */
   public static $isProduction = false;
+  /**
+   * Set it true to enable 3D Secure by default
+   * @static
+   */
   public static $is3ds = false;
+  /**
+   * Enable request params sanitizer (validate and modify charge request params).
+   * See Veritrans_Sanitizer for more details
+   * @static
+   */
   public static $isSanitized = false;
-    public static $curlOptions = array();
+  /**
+   * Default options for every request
+   * @static
+   */
+  public static $curlOptions = array();
 
-  const SANDBOX_BASE_URL = 'https://api.sandbox.veritrans.co.id/v2';
-  const PRODUCTION_BASE_URL = 'https://api.veritrans.co.id/v2';
+  const SANDBOX_BASE_URL = 'https://api.sandbox.midtrans.com/v2';
+  const PRODUCTION_BASE_URL = 'https://api.midtrans.com/v2';
   const SNAP_SANDBOX_BASE_URL = 'https://app.sandbox.midtrans.com/snap/v1';
   const SNAP_PRODUCTION_BASE_URL = 'https://app.midtrans.com/snap/v1';
 
-    public static function getBaseUrl()
-    {
-        return self::$isProduction ?
-            self::PRODUCTION_BASE_URL : self::SANDBOX_BASE_URL;
-    }
+  /**
+   * @return string Veritrans API URL, depends on $isProduction
+   */
+  public static function getBaseUrl()
+  {
+    return Veritrans_Config::$isProduction ?
+        Veritrans_Config::PRODUCTION_BASE_URL : Veritrans_Config::SANDBOX_BASE_URL;
+  }
 
-    public static function getServerKey()
-    {
-        return self::$serverKey;
-    }
-
-    public static function setServerKey($serverKey)
-    {
-        self::$serverKey = $serverKey;
-    }
-
-    public static function getClientKey()
-    {
-        return self::$clientKey;
-    }
-
-    public static function setClientKey($param)
-    {
-        self::$clientKey = $param;
-    }
-
-    public static function getApiVersion()
-    {
-        return self::$apiVersion;
-    }
-
-    public static function setApiVersion($param)
-    {
-        self::$apiVersion = $param;
-    }
-
-    public static function getIsProduction()
-    {
-        return self::$isProduction;
-    }
-
-    public static function setIsProduction($param)
-    {
-        self::$isProduction = $param;
-    }
-
-    public static function getIs3ds()
-    {
-        return self::$is3ds;
-    }
-
-    public static function setIs3ds($param)
-    {
-        self::$is3ds = $param;
-    }
-
-    public static function getIsSanitized()
-    {
-        return self::$isSanitized;
-    }
-
-    public static function setIsSanitized($param)
-    {
-        self::$isSanitized = $param;
-    }
-	  public static function getSnapBaseUrl()
-	  {
-	    return self::$isProduction ?
-	        self::SNAP_PRODUCTION_BASE_URL : self::SNAP_SANDBOX_BASE_URL;
-	  }
+  /**
+   * @return string Snap API URL, depends on $isProduction
+   */
+  public static function getSnapBaseUrl()
+  {
+    return Veritrans_Config::$isProduction ?
+        Veritrans_Config::SNAP_PRODUCTION_BASE_URL : Veritrans_Config::SNAP_SANDBOX_BASE_URL;
+  }
 }
