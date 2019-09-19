@@ -1,8 +1,6 @@
 <?php
 namespace Icube\Snapinst\Model\Ui;
 
-require_once(dirname(__FILE__) . '/../../../midtrans_version.php');
-
 use Magento\Checkout\Model\ConfigProviderInterface;
 use \Icube\Snapinst\Model\Snapinst;
 use Magento\Framework\UrlInterface;
@@ -51,7 +49,10 @@ final class ConfigProvider  implements ConfigProviderInterface{
         $merchantid = $this->iv->getConfigData("merchant_id");
         $mixpanelkey = $production == 1 ? "17253088ed3a39b1e2bd2cbcfeca939a" : "9dcba9b440c831d517e8ff1beff40bd9";
         $magentoversion = \Magento\Framework\App\ObjectManager::getInstance()->get('Magento\Framework\App\ProductMetadataInterface')->getVersion();
-        $pluginversion = MAGENTO2_MIDTRANS_PLUGIN_VERSION;
+
+        $composer = file_get_contents(dirname(__FILE__) . '/../../composer.json');
+        $json = json_decode($composer, true); // decode the JSON into an associative array
+        $pluginversion = $json['version'];
 
         return [
             'payment' => [
