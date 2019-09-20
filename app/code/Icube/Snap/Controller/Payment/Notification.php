@@ -54,7 +54,7 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $vtConfig::$serverKey = $serverKey;
         $notif = $om->get('Veritrans_Notification');
-        error_log(print_r($notif,TRUE));
+        // error_log(print_r($notif,TRUE));
         /*$prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $orderId = str_replace($prefix,'',$notif->order_id);
         if (strpos($orderId,'-') !== false) {

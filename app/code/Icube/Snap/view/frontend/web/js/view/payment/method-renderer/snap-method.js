@@ -25,7 +25,6 @@ define(
             afterPlaceOrder: function () {
 
                 var production = window.checkoutConfig.payment.snap.production;
-                console.log('production = '+production);
                 var client_key = window.checkoutConfig.payment.snap.clientkey;
                 var merchant_id = window.checkoutConfig.payment.snap.merchantid;
                 var mixpanel_key = window.checkoutConfig.payment.snap.mixpanelkey;
@@ -83,9 +82,7 @@ define(
                             );
                         }
 
-                        console.log('data = '+ data);
-                        var token = data.substring(0,36)
-                        console.log("token = " + token);
+                        console.log('snap_token = '+ data);
 
                         trackResult(data, merchant_id, 'fullpayment', 'pay', null);
                             

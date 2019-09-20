@@ -80,9 +80,7 @@ define(
                             }
 
                             //var token = data;
-                        console.log('data = '+ data);
-                        var token = data.substring(0,36)
-                        console.log("token = " + token);
+                        console.log('snap_token = '+ data);
 
                         trackResult(data, merchant_id, 'installment_offline', 'pay', null);
 

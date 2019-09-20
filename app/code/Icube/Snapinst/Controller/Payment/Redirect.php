@@ -254,7 +254,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $writer = new \Zend\Log\Writer\Stream(BP . '/var/log/test.log');
             $logger = new \Zend\Log\Logger();
             $logger->addWriter($writer);
-            error_log(print_r($payloads,true));
+            // error_log(print_r($payloads,true));
             $logger->info('$payloads:'.print_r($payloads,true));
 //            var_dump($payloads);
 //            Mage::log('$payloads:'.print_r($payloads,true),null,'snap_payloads.log',true);
@@ -262,7 +262,7 @@ class Redirect extends \Magento\Framework\App\Action\Action
             $token = $snap->getSnapToken($payloads);
             $logger->info('snap token:'.print_r($token,true));
 //            var_dump($redirUrl);exit();
-            error_log('snap_token:'.$token);
+            // error_log('snap_token:'.$token);
             echo $token;
 
 
