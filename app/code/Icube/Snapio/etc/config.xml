@@ -3,17 +3,17 @@
     <default>
         <payment>
             <snapio>
-                <active>1</active>
-                <title>Snap installment Offline</title>
+                <active>0</active>
+                <title>Payment via Midtrans Installment Offline</title>
                 <!-- <login_id backend_model="Magento\Config\Model\Config\Backend\Encrypted" /> -->
                 <pass_word_1 backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <pass_word_2 backend_model="Magento\Config\Model\Config\Backend\Encrypted" />
                 <order_status>pending</order_status>
-                <instructions>You will be redirected to Veritrans Page.</instructions>
+                <instructions>You will be redirected to Midtrans Page.</instructions>
                 <payment_action>true</payment_action>
                 <is_production>0</is_production>
-                <is_3ds>0</is_3ds>
-                <custom_expiry>120 minute</custom_expiry>
+                <is_3ds>1</is_3ds>
+                <min_amount>500000</min_amount>
                 <model>Icube\Snapio\Model\Snapio</model>
                 <group>offline</group>
             </snapio>

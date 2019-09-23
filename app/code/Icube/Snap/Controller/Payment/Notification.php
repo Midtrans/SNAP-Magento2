@@ -43,21 +43,18 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
      */
     public function execute()
     {
-        echo 'you did it';
-        error_log('notif url');
+        echo 'OK';
         $om = $this->_objectManager;
         //        $session = $om->get('Magento\Checkout\Model\Session');
-        $vtConfig = $om->get('Veritrans\Veritrans_Config');
+        $vtConfig = $om->get('Veritrans_Config');
         $config = $om->get('Magento\Framework\App\Config\ScopeConfigInterface');
 
         $isProduction = $config->getValue('payment/snap/is_production', \Magento\Store\Model\ScopeInterface::SCOPE_STORE)=='1'?true:false;
-        error_log($isProduction);
-        $vtConfig->setIsProduction($isProduction);
+        $vtConfig::$isProduction = $isProduction;
         $serverKey = $config->getValue('payment/snap/server_key', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-        error_log($serverKey);
-        $vtConfig->setServerKey($serverKey);
+        $vtConfig::$serverKey = $serverKey;
         $notif = $om->get('Veritrans_Notification');
-        error_log(print_r($notif,TRUE));
+        // error_log(print_r($notif,TRUE));
         /*$prefix = $config->getValue('payment/snap/prefix', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         $orderId = str_replace($prefix,'',$notif->order_id);
         if (strpos($orderId,'-') !== false) {
@@ -78,11 +75,17 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
         $_info = "status : ".$transaction." , order : ".$orderId.", payment type : ".$payment_type;
         $logger->info( $_info );
         ##log notif snap
+
+        $order_note = "Midtrans HTTP notification received. ";
+
         if ($transaction == 'capture') {
           $order->setInstallmentTenor($notif->installment_term);
+
           if ($fraud == 'challenge') {
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PAYMENT_REVIEW);
+            $order->addStatusHistoryComment($order_note .'Payment status challenged. Please take action on your Merchant Administration Portal - ' . $payment_type);
           }
+
           else if ($fraud == 'accept') {
             if($order->canInvoice() && !$order->hasInvoices()) {
               $invoice = $this->_objectManager->create('Magento\Sales\Model\Service\InvoiceService')->prepareInvoice($order);
@@ -94,12 +97,11 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
                   ->addObject($invoice->getOrder());
               $transactionSave->save();
             }
+
             $order->setData('state', 'processing');
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
-            
-            $emailSender = $this->_objectManager->create('\Magento\Sales\Model\Order\Email\Sender\OrderSender');
-            $emailSender->send($order);
-            
+            $order->addStatusHistoryComment($order_note . 'Payment Completed - ' . $payment_type );
+
             // Xtento_AdvancedOrderStatus compatibility
             if ($this->registry->registry('advancedorderstatus_notifications')) {
                $this->orderCommentSender->send($order);
@@ -118,28 +120,29 @@ class Notification extends \Magento\Framework\App\Action\Action implements CsrfA
                   ->addObject($invoice->getOrder());
               $transactionSave->save();
             }
+
             $order->setData('state', 'processing');
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PROCESSING);
+            $order->addStatusHistoryComment($order_note . 'Payment Completed - ' . $payment_type );
+
             if ($this->registry->registry('advancedorderstatus_notifications')) {
                 $this->orderCommentSender->send($order);
             }
 
-            $emailSender = $this->_objectManager->create('\Magento\Sales\Model\Order\Email\Sender\OrderSender');
-            $emailSender->send($order);
           }
         }
         else if ($transaction == 'pending') {
             $order->setStatus(\Magento\Sales\Model\Order::STATE_PENDING_PAYMENT);
+            $order->addStatusHistoryComment($order_note . 'Awating Payment - ' . $payment_type );
         }
         else if ($transaction == 'cancel' || $transaction == 'deny' || $transaction == 'expire') {
           if ($order->canCancel()) {
             $order->setStatus(\Magento\Sales\Model\Order::STATE_CANCELED);
+            $order->addStatusHistoryComment($order_note . 'Canceled Payment - ' . $payment_type );
             $order->addStatusToHistory(\Magento\Sales\Model\Order::STATE_CANCELED);
           }
         }
-        error_log('before order save');
         $order->save();
-        error_log('order save sukses');
     }
 
     public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
