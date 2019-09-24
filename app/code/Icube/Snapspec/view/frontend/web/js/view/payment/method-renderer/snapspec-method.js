@@ -92,7 +92,7 @@ define(
                         function execSnapCont(){
                             intervalFunction = setInterval(function() {
                                 try{
-                                    snap.pay(token, 
+                                    snap.pay(data, 
                                     {
                                         skipOrderSummary : true,
                                         showOrderId : true,
